@@ -59,5 +59,5 @@ export interface ScatterChartConfig extends ChartConfig {
 export interface BarData {
   label: string;
   value: number;
-  color?: string;
+  color: string;
 }
