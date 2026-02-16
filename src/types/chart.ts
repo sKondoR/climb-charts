@@ -61,3 +61,5 @@ export interface BarData {
   value: number;
   color: string;
 }
+
+export type GradeCounts = Record<string, number>;

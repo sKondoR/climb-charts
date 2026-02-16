@@ -1,0 +1,1 @@
+export const getGradeKey = (grade: string) => grade.split('/')[0];

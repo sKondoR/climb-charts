@@ -24,11 +24,11 @@ export function createBarChart(
   renderer.domElement.style.top = '0';
   renderer.domElement.style.left = '0';
   renderer.shadowMap.enabled = true;
-  // renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const barWidth = 1;
   const spacing = 1;
-  const maxValue = Math.max(...data.map((d) => d.value));
+  const heightCoef = 0.3;
 
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
   camera.position.set(15, 10, 20);
@@ -49,10 +49,9 @@ export function createBarChart(
   group.add(plane);
 
   data.forEach((item, index) => {
-    const barHeight = item.value;
+    const barHeight = item.value * heightCoef;
     const x = index * barWidth + spacing;
 
-    console.log(`bar ${index}: `, barWidth, barHeight, x)
     // Create bar geometry
     const geometry = new THREE.BoxGeometry(barWidth, barHeight, barWidth);
 
@@ -64,7 +63,6 @@ export function createBarChart(
         roughness: 0.3,
         metalness: 0.1
     });
-    console.log(`bar ${index}: `, barWidth, barHeight, x, color)
 
     const bar = new THREE.Mesh(geometry, material);
     bar.position.set(x, barHeight / 2, 0);
@@ -79,11 +77,11 @@ export function createBarChart(
     canvas.width = 256;
     canvas.height = 128;
     context.fillStyle = '#ffffff';
-    context.font = 'bold 48px Arial';
+    context.font = 'bold 60px Arial';
     context.textAlign = 'center';
-    context.fillText(item.label, 128, 64);
-    context.font = 'bold 36px Arial';
-    context.fillText(item.value.toString(), 128, 110);
+    context.fillText(`${item.label} (${item.value})`, 128, 64);
+    // context.font = 'bold 36px Arial';
+    // context.fillText(item.value.toString(), 128, 110);
 
     const texture = new THREE.CanvasTexture(canvas);
     const labelMaterial = new THREE.SpriteMaterial({ map: texture });
@@ -92,10 +90,8 @@ export function createBarChart(
     label.scale.set(2, 1, 1);
 
     group.add(bar);
-    // group.add(label);
+    group.add(label);
   });
-
-
 
   const domElement = document.createElement('div');
   domElement.style.width = `${width}px`;
@@ -105,7 +101,6 @@ export function createBarChart(
 
   // Add renderer to DOM
   domElement.appendChild(renderer.domElement);
-  console.log('group: ', group);
   
   // Animation loop
   function animate() {
