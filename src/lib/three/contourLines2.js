@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function createContourLines(contourPoints, scene) {
+export function createContourLine(contourPoints, scene) {
     if (contourPoints.length > 2) {
         // Create a closed line through the contour points (polyline approach)
         const linePoints = [...contourPoints];
@@ -18,15 +18,5 @@ export function createContourLines(contourPoints, scene) {
         // Create the line object
         const splineLine = new THREE.Line(splineGeometry, splineMaterial);
         scene.add(splineLine);
-        
-        // Add some markers at the exact intersection points
-        const markerGeometry = new THREE.SphereGeometry(0.15, 8, 8);
-        const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Red markers
-        
-        for (const point of contourPoints) {
-            const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-            marker.position.copy(point);
-            scene.add(marker);
-        }
     }
 }
