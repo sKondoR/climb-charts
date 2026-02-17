@@ -13,51 +13,51 @@ export function findContourPoints(heightTarget = 5, numPoints = 60) {
     const points = [];
     const stepAngle = (Math.PI * 2) / numPoints;
     
+    // Определим разумные границы для радиуса поиска
+    const maxRadius = 15; // Максимальное расстояние от центра
+    const minRadius = 0.1; // Минимальное расстояние от центра
+    
     for (let i = 0; i < numPoints; i++) {
         const angle = i * stepAngle;
         
-        // Start with a reasonable radius where the mountain height might be around 5
-        let radius = 2.0; // Starting guess
-        let step = 1.0;
-        let minStep = 0.001;
-        let maxIterations = 100;
-        let iterations = 0;
+        // Используем бинарный поиск для нахождения правильного радиуса
+        let low = minRadius;
+        let high = maxRadius;
+        let bestRadius = null;
+        let bestHeightDiff = Infinity;
         
-        // Use binary search or gradient descent to find the right radius for this angle
-        while (iterations < maxIterations && step > minStep) {
+        // Попробуем несколько итераций бинарного поиска
+        for (let iter = 0; iter < 20; iter++) {
+            const radius = (low + high) / 2;
             const x = Math.cos(angle) * radius;
             const z = Math.sin(angle) * radius;
             const currentHeight = getHeightAt(x, z);
+            const heightDiff = Math.abs(currentHeight - heightTarget);
             
-            if (Math.abs(currentHeight - heightTarget) < 0.01) {
-                // Found a point close enough to the target height
-                points.push(new THREE.Vector3(x, heightTarget, z));
+            // Обновляем лучший результат
+            if (heightDiff < bestHeightDiff) {
+                bestHeightDiff = heightDiff;
+                bestRadius = radius;
+            }
+            
+            // Если нашли точное совпадение, выходим
+            if (heightDiff < 0.01) {
                 break;
-            } else if (currentHeight > heightTarget) {
-                // Too high, need to go further from center (increase radius)
-                radius += step;
+            }
+            
+            // Корректируем границы поиска
+            if (currentHeight > heightTarget) {
+                low = radius; // Нужно увеличить радиус
             } else {
-                // Too low, need to go closer to center (decrease radius)
-                radius -= step;
+                high = radius; // Нужно уменьшить радиус
             }
-            
-            // Reduce step size for more precision as we get closer
-            if (Math.abs(currentHeight - heightTarget) < 0.1) {
-                step *= 0.5; // Reduce step when we're getting close
-            }
-            
-            iterations++;
         }
         
-        // If we couldn't converge, skip this point
-        if (points.length <= i) {
-            // Try to estimate a reasonable point even if we didn't converge precisely
-            const x = Math.cos(angle) * radius;
-            const z = Math.sin(angle) * radius;
-            const currentHeight = getHeightAt(x, z);
-            if (Math.abs(currentHeight - heightTarget) < 0.5) { // Accept if reasonably close
-                points.push(new THREE.Vector3(x, heightTarget, z));
-            }
+        // Если нашли подходящий радиус, добавляем точку
+        if (bestRadius !== null && bestHeightDiff < 0.5) {
+            const x = Math.cos(angle) * bestRadius;
+            const z = Math.sin(angle) * bestRadius;
+            points.push(new THREE.Vector3(x, heightTarget, z));
         }
     }
     return points;
