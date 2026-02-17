@@ -42,8 +42,8 @@ export function findContourPoints(heightTarget = 5, numPoints = 30) {
             }
             
             // Reduce step size for more precision as we get closer
-            if (Math.abs(currentHeight - heightTarget) < 0.2) {
-                step *= 0.8; // Reduce step when we're getting close
+            if (Math.abs(currentHeight - heightTarget) < 0.1) {
+                step *= 0.5; // Reduce step when we're getting close
             }
             
             iterations++;
