@@ -1,32 +1,33 @@
 import * as THREE from 'three';
 
-export function createContourLines(contourPoints, scene) {
+export function createContourLine(contourPoints, scene) {
     if (contourPoints.length > 2) {
-        // Create a closed line through the contour points (polyline approach)
-        const linePoints = [...contourPoints];
-        linePoints.push(contourPoints[0]); // Close the loop by connecting back to the first point
+        // Close the loop by connecting back to the first point
+        const closedPoints = [...contourPoints, contourPoints[0]];
         
-        // Create geometry for the spline
-        const splineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
+        // Convert to Vector3 points
+        const points = closedPoints.map(p => new THREE.Vector3(p.x, p.y, p.z));
         
-        // Create material for the spline
-        const splineMaterial = new THREE.LineBasicMaterial({
-            color: 0xffaa00, // Orange color to stand out
-            linewidth: 3
+        // Create a smooth curve (spline) with more segments and better tension
+        const curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.1);
+        
+        // Create a tube geometry with circular cross-section - increased smoothness
+        const tubeGeometry = new THREE.TubeGeometry(
+            curve,
+            128,   // tubular segments (doubled for smoother path)
+            0.05,  // radius of the tube
+            16,    // radial segments (doubled for smoother circle)
+            false  // closed (we already close the path)
+        );
+        
+        // Create material for the tube
+        const tubeMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffaa00, // Orange color
+            side: THREE.DoubleSide
         });
         
-        // Create the line object
-        const splineLine = new THREE.Line(splineGeometry, splineMaterial);
-        scene.add(splineLine);
-        
-        // Add some markers at the exact intersection points
-        const markerGeometry = new THREE.SphereGeometry(0.15, 8, 8);
-        const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Red markers
-        
-        for (const point of contourPoints) {
-            const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-            marker.position.copy(point);
-            scene.add(marker);
-        }
+        // Create the mesh and add to scene
+        const tubeMesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+        scene.add(tubeMesh);
     }
 }

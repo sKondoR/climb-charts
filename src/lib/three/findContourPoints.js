@@ -9,7 +9,7 @@ function getHeightAt(x, z) {
     return Math.max(0.1, y);
 }
 
-export function findContourPoints(heightTarget = 5, numPoints = 30) {
+export function findContourPoints(heightTarget = 5, numPoints = 60) {
     const points = [];
     const stepAngle = (Math.PI * 2) / numPoints;
     

@@ -38,7 +38,7 @@
         import * as THREE from 'three';
         import { OrbitControls } from './lib/three/three/OrbitControls.js';
         import { findContourPoints } from './lib/three/findContourPoints.js';
-        import { createContourLine } from './lib/three/contourLines2.js';
+        import { createContourLine } from './lib/three/contourLines.js';
 
         // --- Setup scene, camera, renderer ---
         const scene = new THREE.Scene();
@@ -356,10 +356,14 @@
         // --- Simple stars / sky enhancement? Not needed with fog.
 
         // Find points where the mountain surface intersects with the plane y=5
-        const contourPoints = findContourPoints(5, 100);
-        
-        // Create contour lines using the new function
-        createContourLine(contourPoints, scene);
+        const contourPoints6 = findContourPoints(5, 100);
+        createContourLine(contourPoints6, scene);
+
+        // const contourPoints7 = findContourPoints(6, 100);
+        // createContourLine(contourPoints7, scene);
+
+        // const contourPoints8 = findContourPoints(8, 100);
+        // createContourLine(contourPoints8, scene);
 
         // --- Animation loop ---
         function animate() {
