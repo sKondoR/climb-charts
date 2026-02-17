@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { ChartConfig, BarData } from '@/types';
 import { ChartContainer } from '@/components/shared/ChartContainer';
-import { createBarChart, ChartResult } from '@/lib/three/createBarChart';
+import { createBarChart, ChartResult } from '@/lib/createBarChart';
 import { mockRoutes } from '@/data/mockRoutes';
 import { getChartData } from '@/shared/util/getChartData';
 

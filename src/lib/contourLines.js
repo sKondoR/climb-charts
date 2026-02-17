@@ -1,6 +1,8 @@
 import * as THREE from 'three';
+import { findContourPoints } from './findContourPoints.js';
 
-export function createContourLine(contourPoints, scene) {
+export function createContourLine(heightTarget = 5, numPoints = 60, scene) {
+    const contourPoints = findContourPoints(heightTarget, numPoints);
     if (contourPoints.length > 2) {
         // Close the loop by connecting back to the first point
         const closedPoints = [...contourPoints, contourPoints[0]];

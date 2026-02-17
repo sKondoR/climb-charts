@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import type { BarData } from '../../types/chart';
+import type { BarData } from '../types/chart';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
 
 export interface ChartResult {
